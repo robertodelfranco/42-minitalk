@@ -12,6 +12,12 @@
 
 #include "minitalk.h"
 
+void	handle_sig(int signal)
+{
+	if (signal == SIGUSR1)
+		ft_printf("Message received\n");
+}
+
 void	send_message(pid_t pid, char c)
 {
 	int	i;
@@ -30,7 +36,6 @@ void	send_message(pid_t pid, char c)
 
 int	main(int argc, char **argv)
 {
-	int		i;
 	char	*message;
 	pid_t	pid;
 
@@ -42,9 +47,9 @@ int	main(int argc, char **argv)
 		message = argv[2];
 		if (message[0] == 0)
 			return (ft_printf("Empty message\n"), 0);
-		i = 0;
-		while (message[i])
-			send_message(pid, message[i++]);
+		signal(SIGUSR1, handle_sig);
+		while (*message)
+			send_message(pid, *message++);
 		send_message(pid, '\0');
 	}
 	else

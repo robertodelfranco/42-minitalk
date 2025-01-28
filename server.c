@@ -12,6 +12,12 @@
 
 #include "minitalk.h"
 
+void	ft_confirm(pid_t *client_pid)
+{
+	kill(*client_pid, SIGUSR1);
+	*client_pid = 0;
+}
+
 char	*ft_strjoin_letter(char *str, char c)
 {
 	int		i;
@@ -31,12 +37,15 @@ char	*ft_strjoin_letter(char *str, char c)
 	return (new_str);
 }
 
-void	ft_receive(int signal)
+void	ft_receive(int signal, siginfo_t *info, void *not)
 {
-	static char	c = 0;
-	static char	*str;
-	static int	bit_count = 0;
+	static char		c = 0;
+	static char		*str;
+	static int		bit_count = 0;
+	static pid_t	client_pid = 0;
 
+	if (!client_pid && (void *)not)
+		client_pid = info->si_pid;
 	if (!str)
 		str = ft_strdup("");
 	if (signal == SIGUSR2)
@@ -50,6 +59,7 @@ void	ft_receive(int signal)
 			ft_printf("%s\n", str);
 			free(str);
 			str = NULL;
+			ft_confirm(&client_pid);
 		}
 		bit_count = 0;
 		c = 0;
@@ -61,8 +71,8 @@ int	main(void)
 	struct sigaction	signal;
 
 	printf("Server PID: %d\n", getpid());
-	signal.sa_handler = ft_receive;
-	signal.sa_flags = 0;
+	signal.sa_sigaction = ft_receive;
+	signal.sa_flags = SA_SIGINFO;
 	sigaction(SIGUSR1, &signal, NULL);
 	sigaction(SIGUSR2, &signal, NULL);
 	while (1)

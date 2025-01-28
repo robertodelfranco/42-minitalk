@@ -19,10 +19,12 @@
 # include <signal.h>
 
 // Server
+void	ft_confirm(pid_t *client_pid);
 char	*ft_strjoin_letter(char *str, char c);
-void	ft_receive(int signal);
+void	ft_receive(int signal, siginfo_t *info, void *not);
 
 // Client
 void	send_message(pid_t pid, char c);
+void	handle_sig(int signal);
 
 #endif /* MINITALK_H */
