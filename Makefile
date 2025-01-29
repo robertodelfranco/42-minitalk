@@ -1,48 +1,62 @@
-SRC_CLIENT	= client.c
-SRC_SERVER	= server.c
+SRCC_FILES = client.c
+SRCS_FILES = server.c
+BONUS_SRCC_FILES = client_bonus.c
+BONUS_SRCS_FILES = server_bonus.c
+SRC_DIR = src/
+BONUS_DIR = bonus/
+LIB = current_lib
+LIBFT = $(LIB)/libft.a
+SRCC = $(addprefix $(SRC_DIR), $(SRCC_FILES))
+SRCS = $(addprefix $(SRC_DIR), $(SRCS_FILES))
+BONUS_SRCC = $(addprefix $(BONUS_DIR), $(BONUS_SRCC_FILES))
+BONUS_SRCS = $(addprefix $(BONUS_DIR), $(BONUS_SRCS_FILES))
+OBJC = ${SRCC:.c=.o}
+OBJS = ${SRCS:.c=.o}
+BONUS_OBJC = ${BONUS_SRCC:.c=.o}
+BONUS_OBJS = ${BONUS_SRCS:.c=.o}
+CC = cc
+CFLAGS = -Wall -Werror -Wextra
+INCLUDE = -I $(LIB)/Includes
+RM = rm -rf
 
-OBJ_CLIENT	= $(SRC_CLIENT:.c=.o)
-OBJ_SERVER	= $(SRC_SERVER:.c=.o)
+NAMEC = client
+NAMES = server
+NAMEC_BONUS = client_bonus
+NAMES_BONUS = server_bonus
 
-LIBFT	= ./current_lib
-LIB		=	$(LIBFT)/libft.a
+all: $(NAMEC) $(NAMES)
 
-NAME	= minitalk
+$(NAMEC): $(OBJC) $(LIBFT)
+	$(CC) $(CFLAGS) $(OBJC) $(LIBFT) $(INCLUDE) -o $(NAMEC)
 
-HEADER	= -I ${LIBFT}/Includes
+$(NAMES): $(OBJS) $(LIBFT)
+	$(CC) $(CFLAGS) $(OBJS) $(LIBFT) $(INCLUDE) -o $(NAMES)
 
-CC		= gcc
-RM		= rm -f
+bonus: $(NAMEC_BONUS) $(NAMES_BONUS)
 
-CFLAGS 	= -Wall -Wextra -Werror
+$(NAMEC_BONUS): $(BONUS_OBJC) $(LIBFT)
+	$(CC) $(CFLAGS) $(BONUS_OBJC) $(LIBFT) $(INCLUDE) -o $(NAMEC_BONUS)
 
-all:	${NAME}
+$(NAMES_BONUS): $(BONUS_OBJS) $(LIBFT)
+	$(CC) $(CFLAGS) $(BONUS_OBJS) $(LIBFT) $(INCLUDE) -o $(NAMES_BONUS)
 
-%.o:%.c
-	${CC} ${CFLAGS} ${HEADER} -o $@ -c $<
+$(LIBFT):
+	$(MAKE) -C $(LIB)
 
-${NAME}: libft server client
+$(SRC_DIR)%.o: $(SRC_DIR)%.c
+	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
-libft:
-	@echo "compiling libft"
-	@make -C ${LIBFT}
-
-client:	client.o
-	${CC} ${OBJ_CLIENT} ${LIB} ${HEADER} -o client
-
-server:	server.o
-	${CC} ${OBJ_SERVER} ${LIB} ${HEADER} -o server
+$(BONUS_DIR)%.o: $(BONUS_DIR)%.c
+	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
 clean:
-	@rm -rf ${OBJ_CLIENT} ${OBJ_SERVER}
-	@echo "clean objs files"
-	@$(MAKE) -C $(LIBFT) clean
+	@$(MAKE) -C $(LIB) clean
+	$(RM) $(OBJC) $(OBJS) $(BONUS_OBJC) $(BONUS_OBJS)
 
-fclean:	clean
-	@rm -rf server client
-	@echo "clean library"
-	@$(MAKE) -C $(LIBFT) fclean
+fclean: clean
+	@$(MAKE) -C $(LIB) fclean
+	$(RM) $(NAMEC) $(NAMES) $(NAMEC_BONUS) $(NAMES_BONUS)
 
-re:	fclean all
+re: fclean all
 
-.PHONY: all clean fclean re libft
+.PHONY: all clean fclean re bonus
