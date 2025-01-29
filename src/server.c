@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 12:15:37 by marvin            #+#    #+#             */
-/*   Updated: 2025/01/29 13:00:38 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/01/29 15:15:59 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ int	main(void)
 	struct sigaction	signal;
 
 	ft_printf("Server PID: %d\n", getpid());
+	ft_memset(&signal, 0, sizeof(signal));
 	signal.sa_sigaction = ft_receive;
 	signal.sa_flags = SA_SIGINFO;
 	sigaction(SIGUSR1, &signal, NULL);
