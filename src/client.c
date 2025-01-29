@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 12:15:31 by marvin            #+#    #+#             */
-/*   Updated: 2025/01/29 15:30:02 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/01/29 15:31:19 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ static bool	g_message_received = false;
 
 void	handle_sig(int signal)
 {
+	if (signal == SIGUSR2)
+		;
 	g_message_received = true;
 }
 
